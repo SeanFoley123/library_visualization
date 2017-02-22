@@ -1,0 +1,15 @@
+Two main distinctions: SearchQueryGet is the request data, SearchResult is the actual data
+Within SearchResult:
+	Statistics is the data about your search query; how many hits, how much time
+	AvailableCriteria is opaque to me
+	AvailableFacets has breakdowns of publishers, formats, and subjects
+	Data:
+		Recordformat is bleh
+		Records contains all the individual results
+			Records is a list of dictionaries, each of which contains:
+				PLink: Link to EBSCO
+				Recordinfo: Dict of very useful info; title, subject, ISBN. It's deeply nested
+				Items contains similar info to RecordInfo
+				ResultID: Something
+				Header: Some data about whether the book is searchable, how relevant it was to the search, etc.
+				Fulltextholdings: Description of each copy we have

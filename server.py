@@ -1,10 +1,3 @@
-"""
-A Flask server that presents a minimal browsable interface for the Olin course catalog.
-
-author: Oliver Steele <oliver.steele@olin.edu>
-date  : 2017-01-18
-license: MIT
-"""
 import os
 import json
 
