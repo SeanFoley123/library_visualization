@@ -6,10 +6,11 @@ date  : 2017-01-18
 license: MIT
 """
 import os
+import json
 
 from flask import Flask, redirect, render_template, request, url_for
-import requests as r
-from bs4 import BeautifulSoup
+
+from api import search
 
 
 app = Flask(__name__)
@@ -20,13 +21,15 @@ def health():
     return 'ok'
 
 
-@app.route('/<search_string>')
-def home_page(search_string):
-    search_string = search_string.replace(' ', '+')
-    url = 'https://olin.tind.io/search?ln=en&p=%s&f=&rm=wrd&ln=en&sf=&so=d&rg=100' % search_string
-    soup = BeautifulSoup(r.get(url).content, 'html.parser')
-    books = [a.getText().replace('\n', '') for a in soup.find_all('div', 'result-title')]
-    return render_template('index.html', books=books)
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/search', methods=["POST"])
+def query_api():
+    query_string = request.form.get("query")
+    return json.dumps(search(query_string))
 
 
 if __name__ == '__main__':
