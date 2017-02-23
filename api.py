@@ -58,6 +58,20 @@ def search(query_term):
         return search(query_term)
     return res.json()
 
+def create_forest(data):				# Nests dicts for subject hierachies 
+	subjects = [facet for facet in data['SearchResult']['AvailableFacets'] if facet['Id'] == 'SubjectPubDb'][0]['AvailableFacetValues']
+	def add_subject(pos, subject, node, ct):		# Pos = position in list subject, node = a dict, ct = count in that subject
+		key = subject[pos]							# The word we're currently looking at
+		if pos == len(subject)-1:					# If you're at the lowest level, make it a count
+			node[key] = ct
+		else:										# Otherwise, make a new child node or update an existing one
+			add_subject(pos+1, subject, node.setdefault(key, {}), ct)
+	forest = {}
+	for subject_dict in subjects:					# Add each subject path to the forest
+		add_subject(0, subject_dict['Value'].split(" / "), forest, subject_dict['Count'])
+	return forest	
+
 if __name__ == "__main__":
     cats_search = search("cats")
-    pp.pprint(cats_search)
+    pp.pprint(create_forest(cats_search))
+    # pp.pprint(cats_search)
