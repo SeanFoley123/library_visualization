@@ -1,7 +1,6 @@
 import requests as r
 import json
 import pprint
-import time
 import os
 
 from config import USER_ID, PASSWORD, PROFILE
@@ -22,8 +21,10 @@ SESSION_PAYLOAD = {"Profile": PROFILE, "Guest": "n", "Org": None}
 
 def set_token(name, url, payload, headers):
     res = r.post(url, json.dumps(payload), headers=headers)
+    credentials = get_tokens()
     with open(TOKEN_FILE, 'r+') as auth:
-        credentials = json.loads(auth.read())
+        credentials["AuthToken"] = credentials.get("AuthToken", "")
+        credentials["SessionToken"] = credentials.get("SessionToken", "")
         credentials[name] = res.json()[name]
         auth.seek(0)
         auth.truncate()
@@ -35,9 +36,15 @@ def set_tokens():
     set_token('SessionToken', SESSION_URL, SESSION_PAYLOAD, HEADERS)
 
 
-def get_tokens():
-    with open(TOKEN_FILE, 'r') as credentials:
-        return json.loads(credentials.read())
+def get_tokens(open_auth_file=None):
+    try:
+        with open(TOKEN_FILE, 'r') as auth:
+            credentials = json.loads(auth.read())
+    except (IOError, ValueError) as e:
+        credentials = {"AuthToken": "", "SessionToken": ""}
+        with open(TOKEN_FILE, 'w') as auth:
+            auth.write(json.dumps(credentials))
+    return credentials
 
 
 def search(query_term):
@@ -51,18 +58,20 @@ def search(query_term):
         return search(query_term)
     return res.json()
 
-def create_forest(data):				# Nests dicts for subject hierachies 
-	subjects = [facet for facet in data['SearchResult']['AvailableFacets'] if facet['Id'] == 'SubjectPubDb'][0]['AvailableFacetValues']
-	def add_subject(pos, subject, node, ct):		# Pos = position in list subject, node = a dict, ct = count in that subject
-		key = subject[pos]							# The word we're currently looking at
-		if pos == len(subject)-1:					# If you're at the lowest level, make it a count
-			node[key] = ct
-		else:										# Otherwise, make a new child node or update an existing one
-			add_subject(pos+1, subject, node.setdefault(key, {}), ct)
-	forest = {}
-	for subject_dict in subjects:					# Add each subject path to the forest
-		add_subject(0, subject_dict['Value'].split(" / "), forest, subject_dict['Count'])
-	return forest	
+
+def create_forest(data):                # Nests dicts for subject hierachies 
+    subjects = [facet for facet in data['SearchResult']['AvailableFacets'] if facet['Id'] == 'SubjectPubDb'][0]['AvailableFacetValues']
+
+    def add_subject(pos, subject, node, ct):        # Pos = position in list subject, node = a dict, ct = count in that subject
+        key = subject[pos]                          # The word we're currently looking at
+        if pos == len(subject) - 1:                   # If you're at the lowest level, make it a count
+            node[key] = ct
+        else:                                       # Otherwise, make a new child node or update an existing one
+            add_subject(pos + 1, subject, node.setdefault(key, {}), ct)
+    forest = {}
+    for subject_dict in subjects:                   # Add each subject path to the forest
+        add_subject(0, subject_dict['Value'].split(" / "), forest, subject_dict['Count'])
+    return forest
 
 if __name__ == "__main__":
     cats_search = search("cats")

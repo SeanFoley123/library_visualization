@@ -3,7 +3,7 @@ import json
 
 from flask import Flask, redirect, render_template, request, url_for
 
-from api import search
+from api import search, create_forest
 
 
 app = Flask(__name__)
@@ -22,7 +22,8 @@ def index():
 @app.route('/search', methods=["POST"])
 def query_api():
     query_string = request.form.get("query")
-    return json.dumps(search(query_string))
+    search_results = search(query_string)
+    return json.dumps(create_forest(search_results))
 
 
 if __name__ == '__main__':
