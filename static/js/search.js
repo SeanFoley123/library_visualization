@@ -6,7 +6,7 @@ $(function() {
 	      .append( "svg" )
 	      .attr( "width", width )
 	      .attr( "height", height );
-	    
+
 	var highLevel = svg.append("g")
 	var loadingbar = svg.append("g")
 	var spacing = 40;
@@ -14,7 +14,7 @@ $(function() {
 	highLevel.attr("transform", "translate("+ 0+","+ height/2 +")")
 	function constructTree(levelData) {
 		if (typeof levelData == "number") {
-			console.log(levelData);
+			// Do something
 		} else {
 			$('.forrest').remove();
 			$('.bar').remove();
@@ -30,7 +30,7 @@ $(function() {
 		            $('#title').text(d).show();
 		            $('#title').css("margin-left", "-" + $("#title").width()/2 + "px" );
 		        })
-		        .on("mouseout", function(d){
+		        .on("mouseout", function(d) {
 		            d3.select(this).attr("fill","black");
 		            $('#title').hide();
 		        })
@@ -64,6 +64,7 @@ $(function() {
 		        });
 		        // .each('end', constructTree(levelData[key]))
 		    // var widthAdjusted = (window.innerWidth/2 - (spacing * (Object.keys(levelData).length)/2) + radius*2);
+
 		}
 	}
 

@@ -5,6 +5,7 @@ from flask import Flask, redirect, render_template, request, url_for
 
 from api import search, create_forest
 
+import pprint as pp
 
 app = Flask(__name__)
 
@@ -23,6 +24,7 @@ def index():
 def query_api():
     query_string = request.form.get("query")
     search_results = search(query_string)
+    pp.pprint(create_forest(search_results))
     return json.dumps(create_forest(search_results))
 
 
