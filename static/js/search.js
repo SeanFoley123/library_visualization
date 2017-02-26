@@ -39,18 +39,30 @@ $(function() {
 		        	var current_index = i;
 		        	radius = radius*2;
 		        	spacing = radius*4
-		        	highLevel.selectAll('.forrest').transition().duration(2000).attr("cx", function(d, i){
-		        		if (this != current_selection) {
-		        			return (current_index > i) ? -100:width+100;
-		        		}
-		        		else{
-		        			return width/2;
-		        		}
+		        	// console.log()
+		        	highLevel.selectAll('.forrest').filter(function(d, i) {return i != current_index})
+		        		.transition().duration(2000).remove()
+		        		.attr("cx", function(d, i){
+		        			return (current_index > i) ? -100:width+100;})
+		        		.attr('r', radius);
+		        	if (typeof levelData[key] == 'object'){
+		        		highLevel.selectAll('.tree').data(Object.keys(levelData[key]))
+		        		.enter().append('circle').attr('class', 'tree').attr('cx', d3.select(current_selection).attr('cx')) //d3.selectAll(current_selection)
+		        		.attr('r', radius/2);
+		        		var selection_size = Object.keys(levelData[key]).length;
+		        	}
+		        	d3.select(current_selection).remove();
+		        	var final_trans = highLevel.selectAll('.tree').transition().duration(2000).attr('cx', function (d, i){
+		        		return width/2 - (spacing*(Object.keys(levelData[key]).length-1)/2) + spacing*i;
 		        	}).attr('r', radius);
 
-		        	// constructTree(levelData[key]);
+		        	var call_next = final_trans.transition().each('end', function (d, i) {
+		        		if (i > selection_size-1) {
+		        		constructTree(levelData[key]);}
+		        	}).remove();
+	        	
 		        });
-
+		        // .each('end', constructTree(levelData[key]))
 		    // var widthAdjusted = (window.innerWidth/2 - (spacing * (Object.keys(levelData).length)/2) + radius*2);
 		}
 	}
