@@ -6,14 +6,14 @@ $(function() {
 	      .append( "svg" )
 	      .attr( "width", width )
 	      .attr( "height", height );
-	    
+
 	var highLevel = svg.append("g")
 	var spacing = 40;
 	var radius = 10;
 
 	function constructTree(levelData) {
 		if (typeof levelData == "number") {
-			console.log(data);
+			// Do something
 		} else {
 			$('.forrest').remove();
 
@@ -22,14 +22,13 @@ $(function() {
 		        .enter().append("circle")
 		        .attr( "class", "forrest" )
 		        .attr( "cx", function(d, i) { return i * spacing })
-		        .attr( "r", function(d) { return radius })
-		        .on("mouseover", function(d){
+		        .attr( "r", radius)
+		        .on("mouseover", function(d) {
 		            d3.select(this).attr("fill","red");
 		            $('#title').text(d).show();
-		            console.log($("#title").width());
 		            $('#title').css("margin-left", "-" + $("#title").width()/2 + "px" );
 		        })
-		        .on("mouseout", function(d){
+		        .on("mouseout", function(d) {
 		            d3.select(this).attr("fill","black");
 		            $('#title').hide();
 		        })
@@ -38,7 +37,7 @@ $(function() {
 		        });
 
 		    var widthAdjusted = (window.innerWidth/2 - (spacing * (Object.keys(levelData).length)/2) + radius*2);
-		    highLevel.attr("transform", "translate("+ widthAdjusted +","+ window.innerHeight/2 +")")
+		    highLevel.attr("transform", "translate("+ widthAdjusted +","+ (window.innerHeight/2 - 100) +")")
 		}
 	}
 

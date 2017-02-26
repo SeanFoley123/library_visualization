@@ -22,6 +22,10 @@ SESSION_PAYLOAD = {"Profile": PROFILE, "Guest": "n", "Org": None}
 def set_token(name, url, payload, headers):
     res = r.post(url, json.dumps(payload), headers=headers)
     credentials = get_tokens()
+
+    if not res.json().get(name):
+        return credentials
+
     with open(TOKEN_FILE, 'r+') as auth:
         credentials["AuthToken"] = credentials.get("AuthToken", "")
         credentials["SessionToken"] = credentials.get("SessionToken", "")
@@ -48,10 +52,11 @@ def get_tokens(open_auth_file=None):
 
 
 def search(query_term):
+    query_term = query_term.replace(' ', '+')
     tokens = get_tokens()
     HEADERS['x-authenticationToken'] = tokens['AuthToken']
     HEADERS['x-sessionToken'] = tokens['SessionToken']
-    cat_url = BASE_URL + "/edsapi/publication/Search?query=%s&resultsperpage=100&highlight=n" % query_term
+    cat_url = BASE_URL + "/edsapi/publication/Search?query=%s&searchmode=smart&resultsperpage=100&highlight=n" % query_term
     res = r.get(cat_url, headers=HEADERS)
     if res.json().get('ErrorNumber'):
         set_tokens()
