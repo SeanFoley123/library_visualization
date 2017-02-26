@@ -38,14 +38,16 @@ $(function() {
 		        .on("click", function(key, i) {
 		        	var current_selection = this;
 		        	var current_index = i;
+		        	radius = radius*2;
 		        	highLevel.selectAll('.forrest').transition().duration(2000).attr("cx", function(d, i){
 		        		if (this != current_selection) {
 		        			return (current_index > i) ? -100:width+100;
 		        		}
 		        		else{
-		        			return d3.select(current_selection).attr('cx');
+		        			return width/2-radius/2;
 		        		}
-		        	});
+		        	}).attr('r', radius);
+		        	
 
 		        	// highLevel.selectAll('.forrest').filter(function () {return(this != current_selection)}).remove();	
 		        		        	// constructTree(levelData[key])
