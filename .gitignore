@@ -1,4 +1,6 @@
-config.py
+__pycache__
+config.py*
 auth.json
 venv/
 auth.json
+*.pyc

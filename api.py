@@ -56,7 +56,7 @@ def search(query_term):
     tokens = get_tokens()
     HEADERS['x-authenticationToken'] = tokens['AuthToken']
     HEADERS['x-sessionToken'] = tokens['SessionToken']
-    cat_url = BASE_URL + "/edsapi/publication/Search?query=%s&searchmode=smart&resultsperpage=100&highlight=n" % query_term
+    cat_url = BASE_URL + "/edsapi/publication/Search?query=%s&resultsperpage=100&highlight=n" % query_term
     res = r.get(cat_url, headers=HEADERS)
     if res.json().get('ErrorNumber'):
         set_tokens()
@@ -81,4 +81,3 @@ def create_forest(data):                # Nests dicts for subject hierachies
 if __name__ == "__main__":
     cats_search = search("cats")
     pp.pprint(create_forest(cats_search))
-    # pp.pprint(cats_search)
